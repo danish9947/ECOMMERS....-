@@ -30,8 +30,8 @@ export default function App() {
     }
   }
   useEffect(() => {
-    console.log("hello");
     fetchClientSecret()
+    console.log("hello");
   }, [])
 
 

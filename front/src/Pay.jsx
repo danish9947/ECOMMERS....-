@@ -3,48 +3,50 @@ import StripeCheckout from 'react-stripe-checkout';
 const KEY = "pk_test_51OoMhBSHX4xukfmPoWJ25CoSS452rpcNGo8ihtFu5J4hYeYofo4xFoce9OpWPynIlLCdBXdmLc7EFvAS6JUyAUgn00HvJ0XIJ1"
 
 export default function Pay() {
-    const onToken = (token) => {
-        console.log(token);
-    }
+    const makePayment = async () => {
+        const stripe = await loadStripe("pk_test_51OoMhBSHX4xukfmPoWJ25CoSS452rpcNGo8ihtFu5J4hYeYofo4xFoce9OpWPynIlLCdBXdmLc7EFvAS6JUyAUgn00HvJ0XIJ1")
+
+        const body = {
+            products: cart
+        }
+
+        const headers = {
+            "Content-Type": "application/json"
+        }
+
+        const response = await fetch('http://localhost:3001/api/stripe/create-checkout-session', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(body)
+        });
+
+        const session = await response.json();
+
+        const result = stripe.redirectToCheckout({
+            session: session.Id
+        })
+
+        if (result.error) {
+            console.log(result.error);
+        }
+    };
 
     return (
         <div
             style={{
                 height: "100vh",
+                width: "100vw",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                border: "1px solid",
+
             }}
         >
-            <StripeCheckout
-                name="danish shop"
-                image="/avatar.webp"
-                billingAddress
-                shippingAddress
-                description="your total is $20"
-                amount={2000}
-                token={onToken}
-                sripeKey={KEY}
+            <button onClick={{ makePayment }}>
 
-            >
-
-
-                <button
-                    style={{
-                        border: "none",
-                        width: 120,
-                        borderRadius: 5,
-                        padding: "20px",
-                        backgroundColor: "black",
-                        color: "white",
-                        fontWeight: "600",
-                        cursor: "pointer",
-                    }}
-                >
-                    Pay Now
-                </button>
-            </StripeCheckout>
-
+                Pay
+            </button>
         </div>
     )
 }

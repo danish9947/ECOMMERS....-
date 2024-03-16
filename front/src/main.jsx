@@ -5,7 +5,7 @@ import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import Success from './Success.jsx';
 import Pay from './Pay.jsx';
-import Form from './Form.jsx';
+
 
 
 

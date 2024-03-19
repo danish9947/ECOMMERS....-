@@ -1,3 +1,5 @@
+const { create } = require("../models/Cart");
+
 const router = require("express").Router();
 // const { PaymentIntent } = require('stripe');
 const stripe = require("stripe")('sk_test_51OoMhBSHX4xukfmPFMc60gvk6KoRO3yqOS7pF6vFugZbu64ta15PQPRBioqVEe6leJ90hlKcuzkfYcZX9eGGbBz900VQLKS0yv');
@@ -51,32 +53,42 @@ router.post('/create-payment-intent', async (req, res) => {
 
 router.post("/create-checkout-seassion",
     async (req, res) => {
+        console.log(req.body);
         const { products } = req.body;
-        console.log("product is",products);
-        const lineItems = products.map((product) => ({
-            price_data: {
-                currency: "USD",
-                product_data: {
-                    name: product.name,
-                    images: [product.image]
-                },
-                unit_amount: product.price * 100,
+        console.log("product is", products);
+        console.log("Request body:", req.body);
+
+        const price = await stripe.prices.create({
+            currency: "usd",
+            unit_amount: req.body.amount,
+            product_data: {
+                name: "blended shirt"
             },
-            quantity: product.quantity
-        }))
+        });
+
+
+        console.log({ price });
 
 
 
-        const session = await stripe.checkout.session.create({
-            payment_method_types: ["card"],
-            line_items: lineItems,
+        const session = await stripe.checkout.sessions.create({
+            line_items: [
+                {
+                    // Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+                    price: price.id,
+                    quantity: 3,
+                },
+            ],
             mode: "payment",
-            success_url: "https://localhost:3001/success",
-            cancel_url: "https://localhost:3001/cancel"
-        })
+            success_url: "http://localhost:5173/success",
+            cancel_url: "http://localhost:5173/cancel"
 
-        res.json({ id: session.id })
+        });
+        console.log({ create });
+
+        return res.json({ url: session.url })
 
     });
+
 
 module.exports = router;

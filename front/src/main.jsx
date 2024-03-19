@@ -3,24 +3,23 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import Success from './Success.jsx';
 import Pay from './Pay.jsx';
+// import Success from './Success.jsx';
+import Cancel from './cancel.jsx';
+import Success from './success.jsx';
 
 
 
 
 const router = createBrowserRouter([
-  // {
-  //   path: "/",
-  //   element: <Form />,
-  // },
+  
   {
     path: "/",
     element: <App />,
   },
   {
-    path: "/pay",
-    element: <Pay />,
+    path: "/cancel",
+    element: <Cancel />,
   },
   {
     path: "/success",
